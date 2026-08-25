@@ -1,0 +1,182 @@
+/* =========================================================
+   Gomoku-WEB · 共享样式
+   现代 Web 应用 UI/UX · 移动优先 · 轻量无框架
+   ========================================================= */
+
+:root {
+    --primary: #2b7be4;
+    --primary-dark: #1a5fc7;
+    --primary-light: #3a86f0;
+    --primary-soft: rgba(43, 123, 228, 0.12);
+    --success: #0c6b3e;
+    --success-bg: #e6f7ed;
+    --success-border: #b7e4c7;
+    --error: #b2363b;
+    --error-bg: #fee9ea;
+    --error-border: #fcc9cb;
+    --info: #1d4e8f;
+    --info-bg: #e8f0fe;
+    --info-border: #c5d8f5;
+    --text: #0b1e33;
+    --text-sub: #4e637f;
+    --text-muted: #7a8aa3;
+    --bg-start: #f6f9fc;
+    --bg-end: #e9f0f5;
+    --card: rgba(255, 255, 255, 0.85);
+    --radius-lg: 28px;
+    --radius-md: 16px;
+    --radius-sm: 12px;
+    --shadow-card: 0 20px 50px rgba(0, 20, 40, 0.12),
+        0 8px 24px rgba(0, 20, 40, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    --focus-ring: 0 0 0 4px rgba(43, 123, 228, 0.14);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', 'PingFang SC',
+        'Microsoft YaHei', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(145deg, var(--bg-start) 0%, var(--bg-end) 100%);
+    padding: 20px;
+    color: var(--text);
+    line-height: 1.5;
+}
+
+/* ===================== 卡片 ===================== */
+.auth-card {
+    width: 100%;
+    max-width: 430px;
+    background: var(--card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: var(--radius-lg);
+    padding: 38px 36px 40px;
+    box-shadow: var(--shadow-card);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+@media (max-width: 480px) {
+    .auth-card { padding: 26px 18px 30px; border-radius: 22px; }
+}
+
+/* ===================== 头部 ===================== */
+.auth-header { text-align: center; margin-bottom: 28px; }
+.auth-header .logo {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 60px; height: 60px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border-radius: 18px; color: #fff; font-size: 30px; font-weight: 700;
+    margin-bottom: 14px;
+    box-shadow: 0 8px 18px rgba(27, 85, 191, 0.30);
+    user-select: none;
+}
+.auth-header h1 { font-size: 25px; font-weight: 700; letter-spacing: -0.3px; }
+.auth-header p { color: var(--text-sub); font-size: 14px; margin-top: 6px; }
+
+/* ===================== 表单 ===================== */
+.auth-form { display: flex; flex-direction: column; gap: 16px; }
+
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label { font-size: 13px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 6px; }
+.form-group .required { color: #e5484d; font-weight: 700; }
+
+.input-wrapper {
+    position: relative; display: flex; align-items: center;
+    background: #f2f6fb; border-radius: var(--radius-md);
+    border: 1.5px solid transparent;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.input-wrapper:focus-within { border-color: var(--primary); background: #fff; box-shadow: var(--focus-ring); }
+.input-wrapper.invalid { border-color: var(--error); }
+.input-wrapper .input-icon { padding-left: 15px; color: var(--text-muted); font-size: 17px; user-select: none; }
+
+.input-wrapper input {
+    width: 100%; padding: 13px 12px; border: none; background: transparent;
+    font-size: 15px; font-weight: 500; color: var(--text); outline: none; font-family: inherit;
+}
+.input-wrapper input::placeholder { color: #a6b6cf; font-weight: 400; font-size: 14px; }
+
+.toggle-pwd {
+    border: none; background: transparent; cursor: pointer;
+    padding: 0 14px 0 4px; color: var(--text-muted); font-size: 16px;
+    line-height: 1; user-select: none;
+}
+.toggle-pwd:hover { color: var(--primary); }
+
+/* 字段校验提示 */
+.field-hint { font-size: 12px; color: var(--error); min-height: 15px; padding-left: 4px; }
+
+/* 密码强度条 */
+.strength-wrap { height: 5px; background: #ecf1f7; border-radius: 3px; overflow: hidden; margin-top: -2px; }
+.strength-bar { height: 100%; width: 0; border-radius: 3px; transition: width .3s, background .3s; }
+.strength-lab { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+.remember-me { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-sub); cursor: pointer; user-select: none; }
+.remember-me input { width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer; }
+
+/* ===================== 按钮 ===================== */
+.btn {
+    margin-top: 6px; padding: 14px; border: none; border-radius: 50px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #fff; font-size: 16px; font-weight: 700; letter-spacing: .5px;
+    cursor: pointer; transition: transform .25s, box-shadow .25s, opacity .25s;
+    box-shadow: 0 8px 20px rgba(27, 85, 191, .30);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: inherit;
+}
+.btn:hover { transform: translateY(-1px); box-shadow: 0 12px 28px rgba(27,85,191,.40); background: linear-gradient(135deg, var(--primary-light), var(--primary-dark)); }
+.btn:active { transform: scale(.98); }
+.btn:disabled { opacity: .65; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn--ghost { background: #fff; color: var(--primary); box-shadow: inset 0 0 0 1.5px var(--primary); }
+.btn--ghost:hover { background: var(--primary-soft); box-shadow: inset 0 0 0 1.5px var(--primary); }
+.btn .spinner { display:none; }
+
+/* ===================== 消息提示 ===================== */
+.message-area {
+    margin-top: 18px; padding: 11px 14px; border-radius: 12px;
+    font-size: 13px; font-weight: 500; text-align: center; min-height: 20px;
+    display: none; align-items: center; justify-content: center; gap: 6px;
+    border: 1px solid transparent; transition: all .2s;
+}
+.message-area.visible { display: flex; }
+.message-area.success { background: var(--success-bg); border-color: var(--success-border); color: var(--success); }
+.message-area.error { background: var(--error-bg); border-color: var(--error-border); color: var(--error); }
+.message-area.info { background: var(--info-bg); border-color: var(--info-border); color: var(--info); }
+
+/* ===================== 连接状态徽标 ===================== */
+.conn-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 600; color: var(--text-sub);
+    background: #eef3f9; border-radius: 20px; padding: 5px 12px; margin-bottom: 16px;
+}
+.conn-badge .dot { width: 9px; height: 9px; border-radius: 50%; background: #b7c0cf; }
+.conn-badge.connected .dot { background: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,.18); }
+.conn-badge.connecting .dot { background: #f59e0b; }
+.conn-badge.disconnected .dot { background: #ef4444; }
+.conn-badge b { font-weight: 600; }
+
+/* ===================== 底部链接 ===================== */
+.switch-cta { text-align: center; margin-top: 22px; font-size: 14px; color: var(--text-sub); }
+.switch-cta a { color: var(--primary); font-weight: 600; text-decoration: none; transition: color .2s; }
+.switch-cta a:hover { color: var(--primary-dark); text-decoration: underline; }
+
+/* ===================== 入口页 ===================== */
+.lobby { text-align: center; }
+.lobby h1 { font-size: 30px; margin-top: 4px; }
+.lobby .sub { color: var(--text-sub); margin: 8px 0 26px; font-size: 14px; }
+.lobby .actions { display: flex; flex-direction: column; gap: 12px; }
+.lobby .actions .btn { font-size: 15px; padding: 14px; }
+.lobby .tips { margin-top: 24px; text-align: left; background: #f4f8fd; border-radius: 14px; padding: 14px 16px; font-size: 13px; color: var(--text-sub); }
+.lobby .tips li { margin-left: 18px; margin-top: 4px; }

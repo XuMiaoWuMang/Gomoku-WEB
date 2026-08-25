@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="referrer" content="same-origin" />
+    <title>用户注册 · 五子棋</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+    <div class="auth-card" role="main" aria-label="注册面板">
+        <div class="auth-header">
+            <div class="logo" aria-hidden="true">册</div>
+            <h1>创建账户</h1>
+            <p>注册后可参与五子棋在线对战</p>
+        </div>
+
+        <form class="auth-form" id="regForm" novalidate autocomplete="on">
+            <div class="form-group">
+                <label for="username">用户名 <span class="required">*</span></label>
+                <div class="input-wrapper" id="wrapUsername">
+                    <span class="input-icon" aria-hidden="true">👤</span>
+                    <input type="text" id="username" name="username"
+                           placeholder="3-20 位，字母/数字/下划线/中文"
+                           autocomplete="username" maxlength="20"
+                           required aria-required="true" />
+                </div>
+                <div class="field-hint" id="hintUsername" aria-live="polite"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">密码 <span class="required">*</span></label>
+                <div class="input-wrapper" id="wrapPassword">
+                    <span class="input-icon" aria-hidden="true">🔒</span>
+                    <input type="password" id="password" name="password"
+                           placeholder="至少 6 位，长度上限 64 位"
+                           autocomplete="new-password" maxlength="64"
+                           required aria-required="true" />
+                    <button type="button" class="toggle-pwd" data-for="password" aria-label="显示/隐藏密码" tabindex="-1">👁</button>
+                </div>
+                <div class="strength-wrap"><div class="strength-bar" id="strengthBar"></div></div>
+                <div class="strength-lab" id="strengthLab" aria-live="polite"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm">确认密码 <span class="required">*</span></label>
+                <div class="input-wrapper" id="wrapConfirm">
+                    <span class="input-icon" aria-hidden="true">🔒</span>
+                    <input type="password" id="confirm" name="confirm"
+                           placeholder="请再次输入密码"
+                           autocomplete="new-password" maxlength="64"
+                           required aria-required="true" />
+                    <button type="button" class="toggle-pwd" data-for="confirm" aria-label="显示/隐藏密码" tabindex="-1">👁</button>
+                </div>
+                <div class="field-hint" id="hintConfirm" aria-live="polite"></div>
+            </div>
+
+            <button type="submit" class="btn" id="regBtn">
+                <span class="text">注 册</span><span class="spinner">⏳</span>
+            </button>
+        </form>
+
+        <div id="messageArea" class="message-area" role="alert" aria-live="assertive"></div>
+
+        <div class="switch-cta">
+            已有账户？<a href="login.html">直接登录</a>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        (function () {
+            'use strict';
+            var $ = function (id) { return document.getElementById(id); };
+            var uInput = $('username'), pInput = $('password'), cInput = $('confirm');
+            var btn = $('regBtn'), msg = $('messageArea');
+            var wrapU = $('wrapUsername'), sBar = $('strengthBar'), sLab = $('strengthLab');
+            var hintU = $('hintUsername'), hintC = $('hintConfirm');
+
+            function setField(wrap, hint, valid, text) {
+                wrap.classList.toggle('invalid', !valid);
+                if (hint) hint.textContent = valid ? '' : text;
+            }
+
+            function resetBtns() {
+                btn.disabled = false;
+                btn.querySelector('.text').textContent = '注 册';
+                btn.querySelector('.spinner').style.display = 'none';
+            }
+
+            // 实时校验：用户名
+            uInput.addEventListener('input', function () {
+                var r = Auth.RULES.username.test(uInput.value);
+                setField(wrapU, hintU, r.pass, r.msg);
+                if (!r.pass && !uInput.value) hintU.textContent = '';
+                Auth.clearMessage(msg);
+            });
+
+            // 实时校验：密码 + 强度
+            pInput.addEventListener('input', function () {
+                var r = Auth.RULES.password.test(pInput.value);
+                setField($('wrapPassword'), null, r.pass, r.msg);
+                var s = Auth.pwdStrength(pInput.value);
+                var meta = Auth.strengthMeta[s];
+                sBar.style.width = (s / 4 * 100) + '%';
+                sBar.style.background = s ? Auth.strengthColor[meta] : 'transparent';
+                sLab.textContent = pInput.value ? ('密码强度：' + Auth.strengthText[s]) : '';
+                // 若已输入确认密码，联动校验
+                if (cInput.value) {
+                    var cr = Auth.RULES.confirm.test(cInput.value, pInput.value);
+                    setField($('wrapConfirm'), hintC, cr.pass, cr.msg);
+                }
+                Auth.clearMessage(msg);
+            });
+
+            // 实时校验：确认密码
+            cInput.addEventListener('input', function () {
+                var r = Auth.RULES.confirm.test(cInput.value, pInput.value);
+                setField($('wrapConfirm'), hintC, r.pass, r.msg);
+                Auth.clearMessage(msg);
+            });
+
+            // 密码显示/隐藏切换
+            document.querySelectorAll('.toggle-pwd').forEach(function (b) {
+                b.addEventListener('click', function () {
+                    var f = $(b.getAttribute('data-for'));
+                    var show = f.type === 'password';
+                    f.type = show ? 'text' : 'password';
+                    b.textContent = show ? '🙈' : '👁';
+                });
+            });
+
+            // 提交
+            $('regForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                var u = Auth.trim(uInput.value);
+                var p = pInput.value;
+                var ru = Auth.RULES.username.test(u);
+                var rp = Auth.RULES.password.test(p);
+                var rc = Auth.RULES.confirm.test(cInput.value, p);
+
+                setField(wrapU, hintU, ru.pass, ru.msg);
+                setField($('wrapPassword'), null, rp.pass, rp.msg);
+                setField($('wrapConfirm'), hintC, rc.pass, rc.msg);
+                if (!ru.pass || !rp.pass || !rc.pass) {
+                    Auth.showMessage(msg, '请先修正表单中的错误项', 'error');
+                    return;
+                }
+
+                btn.disabled = true;
+                btn.querySelector('.text').textContent = '注册中...';
+                btn.querySelector('.spinner').style.display = 'inline';
+
+                // 约定 payload：同时包含 username（web 处理层解析）与 name（db 层解析）
+                var payload = { username: u, name: u, password: p };
+                Auth.fetchJSON('/reg', payload).then(function (res) {
+                    resetBtns();
+                    if (res.ok && res.result) {
+                        Auth.showMessage(msg, '✅ 注册成功，即将跳转到登录页', 'success');
+                        try { sessionStorage.setItem('gomoku_reg_ok', '1'); } catch (e) {}
+                        setTimeout(function () { window.location.href = 'login.html'; }, 900);
+                    } else {
+                        Auth.showMessage(msg, '❌ ' + (res.reason || '注册失败，请稍后再试'), 'error');
+                    }
+                });
+            });
+
+            window.addEventListener('load', function () { uInput.focus(); });
+        })();
+    </script>
+</body>
+</html>

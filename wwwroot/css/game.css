@@ -1,0 +1,120 @@
+/* =========================================================
+   Gomoku-WEB · 大厅页与对局页样式（依赖 style.css 的 CSS 变量）
+   ========================================================= */
+
+/* ---------- 大厅页 ---------- */
+.hall-card { max-width: 470px; }
+.user-bar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px; background: #f4f8fd; border-radius: 14px;
+    margin-bottom: 18px;
+}
+.user-name { font-weight: 700; }
+.user-score { flex: 1; color: var(--text-sub); font-size: 13px; }
+.btn-sm { margin-top: 0; padding: 8px 14px; font-size: 13px; }
+.match-box { display: flex; gap: 10px; }
+.match-box .btn { flex: 1; margin-top: 0; }
+.match-status {
+    text-align: center; font-size: 14px; font-weight: 600;
+    color: var(--primary-dark); min-height: 22px; margin-top: 12px;
+}
+.hall-tips {
+    margin-top: 18px; font-size: 12px; line-height: 1.8;
+    color: var(--text-muted); text-align: center;
+}
+
+/* ---------- 对局页布局 ---------- */
+.room-layout {
+    display: flex; gap: 18px; align-items: flex-start;
+    justify-content: center; flex-wrap: wrap;
+    width: 100%; max-width: 1120px;
+}
+.room-side { display: flex; flex-direction: column; gap: 14px; width: 340px; max-width: 100%; }
+.room-card .conn-badge { margin-bottom: 10px; }
+.turn-text {
+    font-size: 15px; font-weight: 700; text-align: center;
+    color: var(--primary-dark); min-height: 24px; margin-bottom: 10px;
+}
+.chat-card h2 { font-size: 15px; margin-bottom: 10px; }
+.chat-list {
+    height: 220px; overflow-y: auto; background: #f4f8fd;
+    border-radius: 12px; padding: 10px;
+    display: flex; flex-direction: column; gap: 6px; font-size: 13px;
+}
+.chat-item {
+    max-width: 85%; padding: 6px 10px; border-radius: 10px;
+    background: #fff; box-shadow: 0 1px 2px rgba(0, 20, 40, 0.06);
+    word-break: break-word; align-self: flex-start;
+}
+.chat-item.me { align-self: flex-end; background: var(--primary-soft); }
+.chat-item .t { display: block; font-size: 10px; color: var(--text-muted); margin-top: 3px; }
+.chat-input-row { display: flex; gap: 8px; margin-top: 10px; }
+.chat-input-row input {
+    flex: 1; min-width: 0; padding: 10px 12px;
+    border: 1.5px solid transparent; background: #f2f6fb;
+    border-radius: 12px; font-size: 14px; outline: none; font-family: inherit;
+}
+.chat-input-row input:focus { border-color: var(--primary); background: #fff; }
+.chat-input-row .btn { margin-top: 0; padding: 10px 16px; font-size: 14px; }
+
+/* ---------- 棋盘 ---------- */
+.board {
+    display: grid;
+    grid-template-columns: repeat(15, 36px);
+    grid-template-rows: repeat(15, 36px);
+    gap: 0;
+    background: #e8b96f; padding: 10px; border-radius: 12px;
+    border: 4px solid #b9853f;
+    box-shadow: var(--shadow-card);
+    user-select: none;
+}
+.board-cell {
+    position: relative; width: 100%; height: 100%; cursor: pointer;
+    border-right: 1px solid rgba(0, 0, 0, 0.22);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.22);
+}
+.board-cell:nth-child(15n) { border-right: none; }
+.board-cell:nth-last-child(-n+15) { border-bottom: none; }
+.board-cell.star::after {
+    content: ''; position: absolute; left: 50%; top: 50%;
+    width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px;
+    border-radius: 50%; background: rgba(0, 0, 0, 0.55);
+}
+.stone {
+    position: absolute; inset: 14%;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
+}
+.stone.black { background: radial-gradient(circle at 35% 30%, #555, #000 65%); }
+.stone.white {
+    background: radial-gradient(circle at 35% 30%, #fff, #ddd 65%);
+    border: 1px solid #bbb;
+}
+.last-move .stone { box-shadow: 0 0 0 3px rgba(255, 60, 60, 0.85), 0 2px 4px rgba(0, 0, 0, 0.35); }
+
+@media (max-width: 860px) {
+    .room-side { order: 2; width: 100%; }
+    .board { order: 1; }
+}
+@media (max-width: 640px) {
+    .board {
+        grid-template-columns: repeat(15, 22px);
+        grid-template-rows: repeat(15, 22px);
+        padding: 6px; border-width: 3px;
+    }
+}
+
+/* ---------- 对局结束遮罩 ---------- */
+.overlay {
+    position: fixed; inset: 0; z-index: 50;
+    display: none; align-items: center; justify-content: center;
+    background: rgba(10, 25, 40, 0.55);
+}
+.overlay.show { display: flex; }
+.overlay-card {
+    background: #fff; border-radius: 20px; padding: 32px 40px;
+    text-align: center; box-shadow: var(--shadow-card); max-width: 340px; width: 90%;
+}
+.overlay-card h2 { font-size: 26px; margin-bottom: 8px; }
+.overlay-card p { color: var(--text-sub); margin-bottom: 22px; }
+.overlay-card .btn + .btn { margin-top: 10px; }

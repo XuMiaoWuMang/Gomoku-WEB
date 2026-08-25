@@ -1,0 +1,8 @@
+{
+  "db_user": "root",
+  "db_name": "Gomoku",
+  "db_host": "localhost",
+  "db_port": 3306,
+  "web_root": "./wwwroot",
+  "server_port": 8089
+}
