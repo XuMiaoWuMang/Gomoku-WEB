@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="referrer" content="same-origin" />
+    <title>用户登录 · 五子棋</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+    <div class="auth-card" role="main" aria-label="登录面板">
+        <div class="auth-header">
+            <div class="logo" aria-hidden="true">五</div>
+            <h1>欢迎回来</h1>
+            <p>登录以继续您的五子棋之旅</p>
+        </div>
+
+        <form class="auth-form" id="loginForm" novalidate autocomplete="on">
+            <div class="form-group">
+                <label for="username">用户名 <span class="required">*</span></label>
+                <div class="input-wrapper" id="wrapUsername">
+                    <span class="input-icon" aria-hidden="true">👤</span>
+                    <input type="text" id="username" name="username"
+                           placeholder="请输入用户名" autocomplete="username" maxlength="20"
+                           required aria-required="true" />
+                </div>
+                <div class="field-hint" id="hintUsername" aria-live="polite"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">密码 <span class="required">*</span></label>
+                <div class="input-wrapper" id="wrapPassword">
+                    <span class="input-icon" aria-hidden="true">🔒</span>
+                    <input type="password" id="password" name="password"
+                           placeholder="6-64 位字符" autocomplete="current-password" maxlength="64"
+                           required aria-required="true" />
+                    <button type="button" class="toggle-pwd" data-for="password" aria-label="显示/隐藏密码" tabindex="-1">👁</button>
+                </div>
+                <div class="field-hint" id="hintPassword" aria-live="polite"></div>
+            </div>
+
+            <label class="remember-me">
+                <input type="checkbox" id="remember" name="remember" />
+                记住用户名
+            </label>
+
+            <button type="submit" class="btn" id="loginBtn">
+                <span class="text">登 录</span><span class="spinner">⏳</span>
+            </button>
+        </form>
+
+        <div id="messageArea" class="message-area" role="alert" aria-live="assertive"></div>
+
+        <div class="switch-cta">
+            还没有账户？<a href="register.html">立即注册</a>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        (function () {
+            'use strict';
+            var $ = function (id) { return document.getElementById(id); };
+            var uInput = $('username'), pInput = $('password');
+            var btn = $('loginBtn'), msg = $('messageArea');
+            var wrapU = $('wrapUsername'), wrapP = $('wrapPassword');
+            var hintU = $('hintUsername'), hintP = $('hintPassword');
+            var REMEMBER_KEY = 'gomoku_remembered_username';
+
+            function setField(wrap, hint, valid, text) {
+                wrap.classList.toggle('invalid', !valid);
+                if (hint) hint.textContent = valid ? '' : text;
+            }
+
+            // 显示注册成功提示
+            try { if (sessionStorage.getItem('gomoku_reg_ok')) {
+                sessionStorage.removeItem('gomoku_reg_ok');
+                Auth.showMessage(msg, '✅ 注册成功，请登录', 'success');
+            } } catch (e) {}
+
+            // 记住用户名
+            try {
+                var remembered = localStorage.getItem(REMEMBER_KEY);
+                if (remembered) { uInput.value = remembered; $('remember').checked = true; }
+            } catch (e) {}
+
+            uInput.addEventListener('input', function () {
+                var r = Auth.RULES.username.test(uInput.value);
+                setField(wrapU, hintU, r.pass || !uInput.value, '');
+                Auth.clearMessage(msg);
+            });
+            pInput.addEventListener('input', function () {
+                var r = Auth.RULES.password.test(pInput.value);
+                setField(wrapP, hintP, r.pass || !pInput.value, '');
+                Auth.clearMessage(msg);
+            });
+
+            document.querySelectorAll('.toggle-pwd').forEach(function (b) {
+                b.addEventListener('click', function () {
+                    var f = $(b.getAttribute('data-for'));
+                    var show = f.type === 'password';
+                    f.type = show ? 'text' : 'password';
+                    b.textContent = show ? '🙈' : '👁';
+                });
+            });
+
+            // // WebSocket 会话层：心跳 + 自动重连，维护在线状态
+            // var badge = $('connBadge'), connText = $('connText');
+            // var ws = new Auth.WsSession({
+            //     heartbeatMs: 15000,
+            //     maxRetry: Infinity,
+            //     onStatus: function (status) {
+            //         badge.classList.remove('connected', 'connecting', 'disconnected');
+            //         badge.classList.add(status);
+            //         if (status === 'connected') { connText.textContent = '实时通道已连接'; }
+            //         else if (status === 'connecting') { connText.textContent = '正在连接实时通道...'; }
+            //         else { connText.textContent = '连接中断，自动重连中...'; }
+            //     }
+            // });
+            // ws.connect();
+            // // 页面离开时优雅关闭，避免残留连接
+            // window.addEventListener('beforeunload', function () { try { ws.close(); } catch (e) {} });
+
+            $('loginForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                var u = Auth.trim(uInput.value), p = pInput.value;
+                var ru = Auth.RULES.username.test(u), rp = Auth.RULES.password.test(p);
+                setField(wrapU, hintU, ru.pass, ru.msg);
+                setField(wrapP, hintP, rp.pass, rp.msg);
+                if (!ru.pass || !rp.pass) { Auth.showMessage(msg, '请先修正表单中的错误项', 'error'); return; }
+
+                btn.disabled = true;
+                btn.querySelector('.text').textContent = '登录中...';
+                btn.querySelector('.spinner').style.display = 'inline';
+
+                var payload = { username: u, name: u, password: p };
+                Auth.fetchJSON('/login', payload).then(function (res) {
+                    btn.disabled = false;
+                    btn.querySelector('.text').textContent = '登 录';
+                    btn.querySelector('.spinner').style.display = 'none';
+
+                    if (res.ok && res.result) {
+                        // 记忆用户名
+                        if ($('remember').checked) { try { localStorage.setItem(REMEMBER_KEY, u); } catch (e) {} }
+                        else { try { localStorage.removeItem(REMEMBER_KEY); } catch (e) {} }
+                        Auth.saveSession({ name: u, loginAt: Date.now() });
+                        Auth.showMessage(msg, '✅ 登录成功，进入游戏 ' + u, 'success');
+                        setTimeout(function () { window.location.href = 'hall.html'; }, 900);
+                    } else {
+                        Auth.showMessage(msg, (res.reason && res.reason.indexOf('服务器') >= 0)
+                            ? '⚠️ ' + res.reason
+                            : '❌ 用户名或密码错误，请重试', 'error');
+                        pInput.value = '';
+                        setField(wrapP, hintP, true, '');
+                        pInput.focus();
+                    }
+                });
+            });
+
+            window.addEventListener('load', function () {
+                if (uInput.value) pInput.focus(); else uInput.focus();
+            });
+        })();
+    </script>
+</body>
+</html>

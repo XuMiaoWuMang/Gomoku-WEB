@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="referrer" content="same-origin" />
+    <title>游戏大厅 · 五子棋</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/game.css" />
+</head>
+<body>
+    <div class="auth-card hall-card" role="main" aria-label="游戏大厅">
+        <div class="auth-header">
+            <div class="logo" aria-hidden="true">厅</div>
+            <h1>游戏大厅</h1>
+            <p>随机匹配同级对手，实时五子棋对战</p>
+        </div>
+
+        <div id="connBadge" class="conn-badge" role="status" aria-live="polite">
+            <span class="dot"></span><span id="connText">连接中...</span>
+        </div>
+
+        <div class="user-bar">
+            <span id="userName" class="user-name">—</span>
+            <span id="userScore" class="user-score"></span>
+            <button id="btnLogout" class="btn btn--ghost btn-sm" type="button">退出登录</button>
+        </div>
+
+        <div class="match-box">
+            <button id="btnStart" class="btn" type="button">开始匹配</button>
+            <button id="btnStop" class="btn btn--ghost" type="button" disabled>取消匹配</button>
+        </div>
+        <p id="matchStatus" class="match-status" aria-live="polite"></p>
+
+        <div id="hallMsg" class="message-area" role="alert" aria-live="assertive"></div>
+
+        <div class="hall-tips">
+            匹配成功后自动进入对局页<br />
+            积分 &lt; 2000 铜级 · 2000-3999 银级 · 4000+ 金级，同级匹配
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/game.js"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', function () { GomokuGame.initHall(); });
+    </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="referrer" content="same-origin" />
+    <title>对局 · 五子棋</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/game.css" />
+</head>
+<body>
+    <div class="room-layout" role="main" aria-label="五子棋对局">
+        <div class="room-side">
+            <div class="auth-card room-card">
+                <div class="auth-header">
+                    <div class="logo" aria-hidden="true">棋</div>
+                    <h1>五子棋对局</h1>
+                    <p id="roomInfo">正在进入房间…</p>
+                </div>
+                <div id="connBadge" class="conn-badge" role="status" aria-live="polite">
+                    <span class="dot"></span><span id="connText">连接中...</span>
+                </div>
+                <p id="turnText" class="turn-text" aria-live="polite">正在进入房间…</p>
+                <div id="roomMsg" class="message-area" role="alert" aria-live="assertive"></div>
+                <button id="btnExit" class="btn btn--ghost" type="button">离开房间</button>
+            </div>
+
+            <div class="auth-card chat-card">
+                <h2>聊天</h2>
+                <div id="chatList" class="chat-list" aria-live="polite"></div>
+                <div class="chat-input-row">
+                    <input id="chatInput" type="text" maxlength="100" placeholder="输入消息…" autocomplete="off" />
+                    <button id="btnChat" class="btn btn-sm" type="button">发送</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="board" class="board" role="grid" aria-label="15×15 棋盘"></div>
+    </div>
+
+    <div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-label="对局结束">
+        <div class="overlay-card">
+            <h2 id="overlayTitle"></h2>
+            <p id="overlaySub"></p>
+            <button id="btnReconnect" class="btn btn--ghost" type="button" style="display:none">重新连接</button>
+            <button id="btnBackHall" class="btn" type="button">返回大厅</button>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/game.js"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', function () { GomokuGame.initRoom(); });
+    </script>
+</body>
+</html>
